@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="http://localhost:7800/public/style.css">
+    <title>Own server</title>
+</head>
+<body>
+    <dl id="listBlock"></dl>
+    <button id="getListCoin">Get list coin</button>
+    <button id="clearList">Clear</button>
+   
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io()
+        const config = { 
+            headers:{ 
+                "X-CoinAPI-Key":"3AABB507-DF1F-4679-BD5A-F395C131F638"
+            }
+        }
+        axios.get("https://rest.coinapi.io/v1/exchanges",
+            config
+        )
+        .then((res)=>{
+            socket.emit('get-list', res.data)
+        })
+        .catch((e)=>console.log(e))
+        
+        let listBlock = document.getElementById('listBlock')
+        let getListCoin = document.querySelector('#getListCoin')
+        console.log(listBlock)
+        let AddNewList = ()=>{
+                listBlock.innerHTML=null
+                socket.on('push-list', (data)=>{
+                    console.log(data)
+                    data.map((el)=>{
+                        
+                        listBlock.innerHTML +=`<dt>name:${el.coinName}</dt>`
+                        listBlock.innerHTML +=`<dd>Cost:${el.costUSD}</dd>`
+                        listBlock.innerHTML +=`<dd>Data_start:${el.data.start}</dd>`
+                        listBlock.innerHTML +=`<dd>Data_end:${el.data.end}</dd>`
+                    })
+                })
+        }
+
+        getListCoin.onclick = AddNewList
+        document.getElementById('clearList').onclick = () => {
+            listBlock.innerHTML=null
+        }
+        socket.on('create-list', (data) => {
+            
+        })
+    </script>
+</body>
+</html>
