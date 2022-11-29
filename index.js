@@ -13,8 +13,6 @@ const axios = require('axios')
  
 const config = require('./config')
 
-const routerNotes = require('./routerNotes')
-const routerUsers = require('./routerUser')
 
 
 
@@ -48,15 +46,9 @@ app.get('/', (req,res) => {
   res.sendFile(__dirname+'/mainPage.html')
 })
 
-app.post('/create-users', (req,res) => {
-    let countUsers = req.body.countUsers
-    res.status(200).json(
-        getFakeUsers({count:countUsers})
-    )
-})
 
-app.use('/notes', routerNotes)
-app.use('/users-api', routerUsers)
+
+
 
 //app.post('/users-list', ())
 const deleteAllSession = async() => {
